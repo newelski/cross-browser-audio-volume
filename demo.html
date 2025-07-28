@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cross-Browser Audio Volume Control - Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .demo-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .demo-section h2 {
+            margin-bottom: 20px;
+            color: #333;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .player {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            min-width: 80px;
+        }
+        
+        button:hover:not(:disabled) {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+        
+        button:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .volume-control {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .volume-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #e2e8f0;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+        }
+        
+        .status {
+            background: #1a202c;
+            color: #e2e8f0;
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.4;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .info-card {
+            background: #f7fafc;
+            border-radius: 6px;
+            padding: 15px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .info-card h3 {
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #4a5568;
+        }
+        
+        .info-card p {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .code-example {
+            background: #2d3748;
+            color: #e2e8f0;
+            border-radius: 6px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        
+        .highlight {
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 4px;
+            padding: 2px 4px;
+            font-family: monospace;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .demo-section {
+                padding: 20px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎵 Cross-Browser Audio Volume Control</h1>
+            <p>A JavaScript library that works everywhere, including iOS Safari</p>
+        </div>
+        
+        <div class="demo-section">
+            <h2>🎮 Live Demo</h2>
+            
+            <div class="player">
+                <audio id="demoAudio" preload="metadata">
+                    <source src="https://viderimusic.com/music/The_Pregame_w_%20Benjay_feat._Videri.mp3" type="audio/mpeg">
+                </audio>
+                
+                <div class="controls">
+                    <button id="playBtn">▶️ Play</button>
+                    <button id="pauseBtn" disabled>⏸️ Pause</button>
+                    <button id="initBtn">🔧 Initialize</button>
+                    
+                    <div class="volume-control">
+                        <div class="volume-label">
+                            <span>Volume</span>
+                            <span id="volumeDisplay">50%</span>
+                        </div>
+                        <input type="range" id="volumeSlider" min="0" max="100" value="50">
+                    </div>
+                </div>
+                
+                <div class="status" id="statusLog">Loading demo...</div>
+            </div>
+            
+            <div class="info-grid">
+                <div class="info-card">
+                    <h3>Current Volume</h3>
+                    <p id="currentVolume">50%</p>
+                </div>
+                <div class="info-card">
+                    <h3>Platform</h3>
+                    <p id="platformInfo">-</p>
+                </div>
+                <div class="info-card">
+                    <h3>Web Audio Status</h3>
+                    <p id="webAudioStatus">-</p>
+                </div>
+                <div class="info-card">
+                    <h3>Volume Control</h3>
+                    <p id="volumeControlStatus">-</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h2>📖 How It Works</h2>
+            <p>This library solves the iOS Safari limitation where <span class="highlight">audio.volume</span> is read-only by using the Web Audio API with a GainNode for precise volume control.</p>
+            
+            <h3>Basic Usage:</h3>
+            <div class="code-example">const audio = document.getElementById('myAudio');
+const volumeControl = new CrossBrowserAudioVolume(audio, {
+    initialVolume: 50,
+    debug: true,
+    onVolumeChange: (volume) => {
+        console.log(`Volume: ${volume}%`);
+    }
+});
+
+// Must be called from user interaction on iOS
+button.addEventListener('click', async () => {
+    await volumeControl.play();
+});
+
+// Set volume (works on all platforms)
+volumeControl.setVolume(75);</div>
+        </div>
+        
+        <div class="demo-section">
+            <h2>🔧 API Methods</h2>
+            <div style="display: grid; gap: 15px;">
+                <div>
+                    <strong>setVolume(percent)</strong> - Set volume 0-100
+                    <div class="code-example">volumeControl.setVolume(80);</div>
+                </div>
+                <div>
+                    <strong>getVolume()</strong> - Get current volume
+                    <div class="code-example">const vol = volumeControl.getVolume();</div>
+                </div>
+                <div>
+                    <strong>play()</strong> - Play with Web Audio initialization
+                    <div class="code-example">await volumeControl.play();</div>
+                </div>
+                <div>
+                    <strong>pause()</strong> - Pause playback
+                    <div class="code-example">await volumeControl.pause();</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h2>🌟 Features</h2>
+            <ul style="list-style: none; padding: 0;">
+                <li style="padding: 8px 0; border-bottom: 1px solid #e2e8f0;">✅ <strong>iOS Safari Compatible</strong> - Works around read-only volume limitation</li>
+                <li style="padding: 8px 0; border-bottom: 1px solid #e2e8f0;">✅ <strong>Cross-Browser</strong> - Consistent API across all modern browsers</li>
+                <li style="padding: 8px 0; border-bottom: 1px solid #e2e8f0;">✅ <strong>Web Audio API</strong> - Uses GainNode for precise volume control</li>
+                <li style="padding: 8px 0; border-bottom: 1px solid #e2e8f0;">✅ <strong>Zero Dependencies</strong> - Lightweight and self-contained</li>
+                <li style="padding: 8px 0; border-bottom: 1px solid #e2e8f0;">✅ <strong>Promise-Based</strong> - Modern async/await API</li>
+                <li style="padding: 8px 0;">✅ <strong>Mobile Optimized</strong> - Handles mobile browser quirks</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Include the library -->
+    <script src="CrossBrowserAudioVolume.js"></script>
+    
+    <script>
+        // Demo implementation
+        let volumeControl;
+        let statusLog = [];
+        
+        function updateStatus(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            statusLog.unshift(`${timestamp}: ${message}`);
+            if (statusLog.length > 10) statusLog.pop();
+            document.getElementById('statusLog').innerHTML = statusLog.join('<br>');
+        }
+        
+        function updateInfo() {
+            const info = CrossBrowserAudioVolume.getCompatibilityInfo();
+            document.getElementById('platformInfo').textContent = info.isIOS ? 'iOS' : 'Desktop/Android';
+            document.getElementById('webAudioStatus').textContent = info.webAudioSupported ? 'Supported' : 'Not Supported';
+            document.getElementById('volumeControlStatus').textContent = info.volumeControlSupported ? 'Native Support' : 'Web Audio Required';
+        }
+        
+        // Initialize the demo
+        document.addEventListener('DOMContentLoaded', () => {
+            const audio = document.getElementById('demoAudio');
+            
+            // Create volume control instance
+            volumeControl = new CrossBrowserAudioVolume(audio, {
+                initialVolume: 50,
+                debug: true,
+                onVolumeChange: (volume) => {
+                    document.getElementById('volumeDisplay').textContent = `${volume}%`;
+                    document.getElementById('currentVolume').textContent = `${volume}%`;
+                    updateStatus(`Volume changed to ${volume}%`);
+                },
+                onReady: () => {
+                    updateStatus('Web Audio API initialized successfully');
+                },
+                onError: (error) => {
+                    updateStatus(`Error: ${error.message}`);
+                }
+            });
+            
+            // Update compatibility info
+            updateInfo();
+            updateStatus('Demo loaded - ready to play');
+            
+            // Event listeners
+            document.getElementById('playBtn').addEventListener('click', async () => {
+                try {
+                    await volumeControl.play();
+                    document.getElementById('playBtn').disabled = true;
+                    document.getElementById('pauseBtn').disabled = false;
+                    updateStatus('Playback started');
+                } catch (error) {
+                    updateStatus(`Play failed: ${error.message}`);
+                }
+            });
+            
+            document.getElementById('pauseBtn').addEventListener('click', async () => {
+                try {
+                    await volumeControl.pause();
+                    document.getElementById('playBtn').disabled = false;
+                    document.getElementById('pauseBtn').disabled = true;
+                    updateStatus('Playback paused');
+                } catch (error) {
+                    updateStatus(`Pause failed: ${error.message}`);
+                }
+            });
+            
+            document.getElementById('initBtn').addEventListener('click', async () => {
+                try {
+                    const success = await volumeControl.initialize();
+                    updateStatus(success ? 'Manual initialization successful' : 'Manual initialization failed');
+                } catch (error) {
+                    updateStatus(`Initialization error: ${error.message}`);
+                }
+            });
+            
+            document.getElementById('volumeSlider').addEventListener('input', (e) => {
+                const volume = parseInt(e.target.value);
+                volumeControl.setVolume(volume);
+            });
+            
+            // Audio event listeners for UI updates
+            audio.addEventListener('ended', () => {
+                document.getElementById('playBtn').disabled = false;
+                document.getElementById('pauseBtn').disabled = true;
+                updateStatus('Playback ended');
+            });
+            
+            audio.addEventListener('loadstart', () => {
+                updateStatus('Loading audio file...');
+            });
+            
+            audio.addEventListener('canplay', () => {
+                updateStatus('Audio ready to play');
+            });
+            
+            audio.addEventListener('error', (e) => {
+                updateStatus(`Audio error: ${e.message || 'Unknown error'}`);
+            });
+        });
+    </script>
+</body>
+</html>
