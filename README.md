@@ -1,6 +1,6 @@
 # Cross-Browser Audio Volume Control
 
-A lightweight JavaScript library that provides consistent audio volume control across all browsers and platforms, specifically designed to work with iOS Safari where the native `audio.volume` property is read-only.
+A lightweight JavaScript library that provides consistent audio volume control across all browsers and platforms, specifically designed to work with iOS Safari where the native `audio.volume` property is read-only. This is work in progress so bugs are expected - please report them via Issues or make a PR.
 
 ## Features
 
