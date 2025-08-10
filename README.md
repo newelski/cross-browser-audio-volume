@@ -4,25 +4,20 @@ A lightweight JavaScript library that provides consistent audio volume control a
 
 ## Features
 
-- ✅ **iOS Safari Compatible** - Works around the read-only `audio.volume` limitation
-- ✅ **Cross-Browser Support** - Consistent API across all modern browsers
-- ✅ **Web Audio API** - Uses GainNode for precise volume control
-- ✅ **Fallback Support** - Gracefully falls back to native volume control when possible
-- ✅ **Promise-Based** - Modern async/await API
-- ✅ **Zero Dependencies** - Lightweight and self-contained
-- ✅ **TypeScript Ready** - Includes type definitions
-- ✅ **Mobile Optimized** - Handles mobile browser quirks
+- **iOS Safari Compatible** - Works around the read-only `audio.volume` limitation
+- **Cross-Browser Support** - Consistent API across all modern browsers
+- **Web Audio API** - Uses GainNode for precise volume control
+- **Fallback Support** - Gracefully falls back to native volume control when possible
+- **Promise-Based** - Modern async/await API
+- **Zero Dependencies** - Lightweight and self-contained
+- **TypeScript Ready** - Includes type definitions
+- **Mobile Optimized** - Handles mobile browser quirks
 
 ## Installation
 
 ### CDN
 ```html
 <script src="https://cdn.jsdelivr.net/gh/yourusername/cross-browser-audio-volume@main/dist/CrossBrowserAudioVolume.min.js"></script>
-```
-
-### npm
-```bash
-npm install cross-browser-audio-volume
 ```
 
 ### Direct Download
